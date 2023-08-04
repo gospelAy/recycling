@@ -1,24 +1,30 @@
 package com.example.recyclingplastic.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.NaturalId;
+    @Getter
+    @Setter
+    @Entity
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class Customer {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        private String firstName;
+        private String lastName;
+        @NaturalId(mutable = true)
+        private String email;
+        private String password;
+        private String role;
+        private boolean isEnabled = false;
+    }
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity
-public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long customerId;
-    private String first_name;
-    private String last_name;
-    private String email;
-    private String password;
-    @Enumerated(EnumType.STRING)
-    private Role role;
-    private String username;
-}
+

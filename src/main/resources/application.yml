@@ -1,0 +1,23 @@
+server:
+  port: 9191
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/security_db
+    username: root
+    password: glory12345-6
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: gosple531@gmail.com
+    password: tadencqyaadqfhrm
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
