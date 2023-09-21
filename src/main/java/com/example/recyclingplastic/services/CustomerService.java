@@ -11,11 +11,9 @@ public interface CustomerService {
     List<Customer> getUsers();
     Customer registerUser(RegistrationRequest request);
     Optional<Customer> findByEmail(String email);
-
     void saveUserVerificationToken(Customer theUser, String verificationToken);
 
     String validateToken(String theToken);
-
 
     VerificationToken generateNewVerificationToken(String oldToken);
 
@@ -23,4 +21,5 @@ public interface CustomerService {
     RegistrationRequest getCustomerById(long id);
     RegistrationRequest updateCustomer(RegistrationRequest customerDto, long id);
     void deleteCustomerId(long id);
+    String loginEngineer(String username, String password);
 }

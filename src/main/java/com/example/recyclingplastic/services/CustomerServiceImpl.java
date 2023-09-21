@@ -86,7 +86,6 @@ public class CustomerServiceImpl implements CustomerService {
         return tokenRepository.save(verificationToken);
     }
 
-
     @Override
     public CustomerResponse getAllCustomer(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
@@ -130,6 +129,20 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = userRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("Customer could not be deleted"));
         userRepository.delete(customer);
     }
+
+    @Override
+    public String loginEngineer(String email, String password) {
+        Optional<Customer> optionalCustomer = userRepository.findByEmail(email);
+        if (optionalCustomer.isEmpty()) {
+            return "You are not registered";
+        }
+        Customer customer = optionalCustomer.get();
+        if (!customer.getPassword().equals(password)) {
+            return "Incorrect password";
+        }
+        return "Login successful";
+    }
+
 
     private RegistrationRequest mapToDto(Customer customer){
         return new RegistrationRequest(

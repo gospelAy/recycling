@@ -33,6 +33,7 @@ public class CustomerRegistrationController {
 
 
     @PostMapping
+
     public String registerUser(@RequestBody RegistrationRequest registrationRequest, final HttpServletRequest request){
         Customer user = userService.registerUser(registrationRequest);
         publisher.publishEvent(new RegistrationCompleteEvent(user, applicationUrl(request)));

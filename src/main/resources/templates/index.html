@@ -1,0 +1,33 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {
+            "packages":["map"],
+            // Note: you will need to get a mapsApiKey for your project.
+            // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+            // "mapsApiKey": "AIzaSyD5qNcLIdSM12Ji09v1QTOybbPfr2kRCu8"
+        });
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Lat', 'Long', 'Name'],
+                [6.465422, 3.406448, 'Nigeria'],
+                [6.5244, 3.3792, 'Lagos'], // Updated coordinates for Lagos
+                [6.5000, 3.3667, 'Yaba']
+            ]);
+
+            var map = new google.visualization.Map(document.getElementById('map_div'));
+            map.draw(data, {
+                showTooltip: true,
+                showInfoWindow: true
+            });
+        }
+
+    </script>
+</head>
+
+<body>
+<div id="map_div" style="width: 800px; height: 700px"></div>
+</body>
+</html>

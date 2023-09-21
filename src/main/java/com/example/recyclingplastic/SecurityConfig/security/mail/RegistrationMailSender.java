@@ -22,10 +22,11 @@ public class RegistrationMailSender {
                 "<p>Thank you for registering with us,"+"" +
                 "Please, follow the link below to complete your registration.</p>"+
                 "<a href=\"" +url+ "\">Verify your email to activate your account</a>"+
-                "<p> Thank you <br> Users Registration Portal Service";
+                "<p> Thank you <br> Users Registration Portal Service" +
+                "<img src=\"https://www.shutterstock.com/image-photo/user-authentication-system-biometric-identification-fingerprint-2225655967\" alt=\"Internet Security\">\n";
         MimeMessage message = mailSender.createMimeMessage();
         var messageHelper = new MimeMessageHelper(message);
-        messageHelper.setFrom("dailycodework@gmail.com", senderName);
+        messageHelper.setFrom("ekopay@gmail.com", senderName);
         messageHelper.setTo(event.getUser().getEmail());
         messageHelper.setSubject(subject);
         messageHelper.setText(mailContent, true);
