@@ -1,7 +1,7 @@
 package com.example.recyclingplastic.SecurityConfig.security.event.listener;
 
-import com.example.recyclingplastic.models.Customer;
-import com.example.recyclingplastic.services.CustomerServiceImpl;
+import com.example.recyclingplastic.models.Ecopal;
+import com.example.recyclingplastic.services.imp.CustomerServiceImpl;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class RegistrationCompleteEventListener implements ApplicationListener<RegistrationCompleteEvent> {
     private final CustomerServiceImpl userService;
     private final JavaMailSender mailSender;
-    private Customer theUser;
+    private Ecopal theUser;
     @Override
     public void onApplicationEvent(RegistrationCompleteEvent event) {
         // 1. Get the newly registered user

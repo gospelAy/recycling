@@ -1,13 +1,16 @@
-package com.example.recyclingplastic.services;
+package com.example.recyclingplastic.services.imp;
 
-import com.example.recyclingplastic.dto.CustomerResponse;
-import com.example.recyclingplastic.dto.RegistrationRequest;
+import com.example.recyclingplastic.dto.request.EcopalProfileDto;
+import com.example.recyclingplastic.dto.response.EcopalResponse;
+import com.example.recyclingplastic.dto.request.RegistrationRequest;
 import com.example.recyclingplastic.exceptions.CustomerNotFoundException;
+import com.example.recyclingplastic.exceptions.UserProfileNotFoundException;
 import com.example.recyclingplastic.repository.CustomerRepository;
-import com.example.recyclingplastic.models.Customer;
+import com.example.recyclingplastic.models.Ecopal;
 import com.example.recyclingplastic.SecurityConfig.security.token.VerificationToken;
 import com.example.recyclingplastic.SecurityConfig.security.token.VerificationTokenRepository;
 import com.example.recyclingplastic.exceptions.UserAlreadyExistsException;
+import com.example.recyclingplastic.services.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,18 +32,18 @@ public class CustomerServiceImpl implements CustomerService {
     private final VerificationTokenRepository tokenRepository;
 
     @Override
-    public List<Customer> getUsers() {
+    public List<Ecopal> getUsers() {
         return userRepository.findAll();
     }
 
     @Override
-    public Customer registerUser(RegistrationRequest request) {
-        Optional<Customer> user = this.findByEmail(request.email());
+    public Ecopal registerUser(RegistrationRequest request) {
+        Optional<Ecopal> user = this.findByEmail(request.email());
         if (user.isPresent()) {
             throw new UserAlreadyExistsException(
                     "User with email " + request.email() + " already exists");
         }
-        var newUser = new Customer();
+        var newUser = new Ecopal();
         newUser.setFirstName(request.firstName());
         newUser.setLastName(request.lastName());
         newUser.setEmail(request.email());
@@ -50,12 +53,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Optional<Customer> findByEmail(String email) {
+    public Optional<Ecopal> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     @Override
-    public void saveUserVerificationToken(Customer theUser, String token) {
+    public void saveUserVerificationToken(Ecopal theUser, String token) {
         var verificationToken = new VerificationToken(token, theUser);
         tokenRepository.save(verificationToken);
     }
@@ -66,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (token == null) {
             return "Invalid verification token";
         }
-        Customer user = token.getUser();
+        Ecopal user = token.getUser();
         Calendar calendar = Calendar.getInstance();
         if ((token.getExpirationTime().getTime() - calendar.getTime().getTime()) <= 0) {
             return "Verification link already expired," +
@@ -87,70 +90,85 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponse getAllCustomer(int pageNo, int pageSize) {
+    public EcopalResponse getAllCustomer(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Customer> customers = userRepository.findAll(pageable);
-        List<Customer> listOfCustomer = customers.getContent();
-        List<RegistrationRequest> content = listOfCustomer.stream().map(p -> mapToDto(p)).collect(Collectors.toList());
+        Page<Ecopal> customers = userRepository.findAll(pageable);
+        List<Ecopal> listOfEcopal = customers.getContent();
+        List<RegistrationRequest> content = listOfEcopal.stream().map(p -> mapToDto(p)).collect(Collectors.toList());
 
-        CustomerResponse customerResponse = new CustomerResponse();
-        customerResponse.setContent(content);
-        customerResponse.setPageNo(customers.getNumber());
-        customerResponse.setPageSize(customers.getSize());
-        customerResponse.setTotalElements(customers.getTotalElements());
-        customerResponse.setTotalPages(customers.getTotalPages());
-        customerResponse.setLast(customers.isLast());
-        return customerResponse;
+        EcopalResponse ecopalResponse = new EcopalResponse();
+        ecopalResponse.setContent(content);
+        ecopalResponse.setPageNo(customers.getNumber());
+        ecopalResponse.setPageSize(customers.getSize());
+        ecopalResponse.setTotalElements(customers.getTotalElements());
+        ecopalResponse.setTotalPages(customers.getTotalPages());
+        ecopalResponse.setLast(customers.isLast());
+        return ecopalResponse;
     }
 
     @Override
     public RegistrationRequest getCustomerById(long id) {
-        Customer customer = userRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("customer could not be found"));
-        return mapToDto(customer);
+        Ecopal ecopal = userRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("customer could not be found"));
+        return mapToDto(ecopal);
     }
-
 
     @Override
     public RegistrationRequest updateCustomer(RegistrationRequest customerDto, long id) {
-        Customer customer = userRepository.findById(id).orElseThrow(() ->
+        Ecopal ecopal = userRepository.findById(id).orElseThrow(() ->
                 new CustomerNotFoundException("customer could not be updated"));
 
-        customer.setFirstName(customerDto.firstName());
-        customer.setLastName(customerDto.lastName());
-        customer.setEmail(customerDto.email());
-        customer.setPassword(customerDto.password());
+        ecopal.setFirstName(customerDto.firstName());
+        ecopal.setLastName(customerDto.lastName());
+        ecopal.setEmail(customerDto.email());
+        ecopal.setPassword(customerDto.password());
 
-        Customer updateCustomer = userRepository.save(customer);
-        return mapToDto(updateCustomer);
+        Ecopal updateEcopal = userRepository.save(ecopal);
+        return mapToDto(updateEcopal);
     }
 
     @Override
     public void deleteCustomerId(long id) {
-        Customer customer = userRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("Customer could not be deleted"));
-        userRepository.delete(customer);
+        Ecopal ecopal = userRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("Customer could not be deleted"));
+        userRepository.delete(ecopal);
     }
 
     @Override
     public String loginEngineer(String email, String password) {
-        Optional<Customer> optionalCustomer = userRepository.findByEmail(email);
+        Optional<Ecopal> optionalCustomer = userRepository.findByEmail(email);
         if (optionalCustomer.isEmpty()) {
             return "You are not registered";
         }
-        Customer customer = optionalCustomer.get();
-        if (!customer.getPassword().equals(password)) {
+        Ecopal ecopal = optionalCustomer.get();
+        if (!ecopal.getPassword().equals(password)) {
+            return "Incorrect password";
+        } else if (!ecopal.getEmail().equals(email)) {
             return "Incorrect password";
         }
         return "Login successful";
     }
 
+    @Override
+    public EcopalProfileDto getUserProfileDtoById(Long userId) {
+        Optional<Ecopal> userProfile = userRepository.findById(userId);
+        if (userProfile.isPresent()){
+            Ecopal user = userProfile.get();
+            EcopalProfileDto ecopalProfileDto = new EcopalProfileDto();
+            ecopalProfileDto.setFirstname(user.getFirstName());
+            ecopalProfileDto.setPhoneNumber(user.getPhoneNumber());
+            return ecopalProfileDto;
+        }else {
+            throw new UserProfileNotFoundException("user profile not found for userId: " + userId);
+        }
+    }
 
-    private RegistrationRequest mapToDto(Customer customer){
+
+    private RegistrationRequest mapToDto(Ecopal ecopal){
         return new RegistrationRequest(
-                customer.getFirstName(),
-                customer.getLastName(),
-                customer.getEmail(),
-                customer.getPassword(),
-                customer.getRole()
+                ecopal.getFirstName(),
+                ecopal.getLastName(),
+                ecopal.getEmail(),
+                ecopal.getPassword(),
+                ecopal.getRole()
         );
     }
 }

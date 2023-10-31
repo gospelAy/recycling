@@ -1,6 +1,6 @@
 package com.example.recyclingplastic.SecurityConfig.security.token;
 
-import com.example.recyclingplastic.models.Customer;
+import com.example.recyclingplastic.models.Ecopal;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,9 +23,9 @@ public class VerificationToken {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private Customer user;
+    private Ecopal user;
 
-    public VerificationToken(String token, Customer user) {
+    public VerificationToken(String token, Ecopal user) {
         super();
         this.token = token;
         this.user = user;

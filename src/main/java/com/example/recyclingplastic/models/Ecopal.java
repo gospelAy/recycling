@@ -1,9 +1,6 @@
 package com.example.recyclingplastic.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +11,7 @@ import org.hibernate.annotations.NaturalId;
     @Entity
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Customer {
+    public class Ecopal {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
@@ -23,6 +20,10 @@ import org.hibernate.annotations.NaturalId;
         @NaturalId(mutable = true)
         private String email;
         private String password;
+        private String username;
+        private String phoneNumber;
+        @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+        private Address address;
         private String role;
         private boolean isEnabled = false;
     }

@@ -13,7 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class CloudinaryServiceImplTest {
-    @Autowired CloudinaryService cloudinaryService;
+    @Autowired
+    CloudinaryService cloudinaryService;
 
     @Test
     void upload() {

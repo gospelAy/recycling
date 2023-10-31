@@ -23,7 +23,7 @@ public class RegistrationMailSender {
                 "Please, follow the link below to complete your registration.</p>"+
                 "<a href=\"" +url+ "\">Verify your email to activate your account</a>"+
                 "<p> Thank you <br> Users Registration Portal Service" +
-                "<img src=\"https://www.shutterstock.com/image-photo/user-authentication-system-biometric-identification-fingerprint-2225655967\" alt=\"Internet Security\">\n";
+                "<img src=\"\">\n";
         MimeMessage message = mailSender.createMimeMessage();
         var messageHelper = new MimeMessageHelper(message);
         messageHelper.setFrom("ekopay@gmail.com", senderName);

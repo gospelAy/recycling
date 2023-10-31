@@ -4,10 +4,15 @@ import com.example.recyclingplastic.SecurityConfig.security.event.listener.Regis
 import com.example.recyclingplastic.SecurityConfig.security.event.listener.RegistrationCompleteEventListener;
 import com.example.recyclingplastic.SecurityConfig.security.token.VerificationToken;
 import com.example.recyclingplastic.SecurityConfig.security.token.VerificationTokenRepository;
-import com.example.recyclingplastic.dto.CustomerResponse;
-import com.example.recyclingplastic.dto.RegistrationRequest;
-import com.example.recyclingplastic.models.Customer;
-import com.example.recyclingplastic.services.CustomerServiceImpl;
+import com.example.recyclingplastic.dto.request.EcopalProfileDto;
+import com.example.recyclingplastic.dto.request.LoginRequest;
+import com.example.recyclingplastic.dto.request.RegistrationRequest;
+import com.example.recyclingplastic.dto.response.EcopalResponse;
+import com.example.recyclingplastic.exceptions.CustomerNotFoundException;
+import com.example.recyclingplastic.exceptions.UserProfileNotFoundException;
+import com.example.recyclingplastic.models.Ecopal;
+import com.example.recyclingplastic.services.imp.CloudinaryServiceImpl;
+import com.example.recyclingplastic.services.imp.CustomerServiceImpl;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +21,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.UnsupportedEncodingException;
 
@@ -30,12 +36,12 @@ public class CustomerRegistrationController {
     private final ApplicationEventPublisher publisher;
     private final VerificationTokenRepository tokenRepository;
     private final RegistrationCompleteEventListener eventListener;
-
+    private final CloudinaryServiceImpl cloudinaryService;
 
     @PostMapping
 
     public String registerUser(@RequestBody RegistrationRequest registrationRequest, final HttpServletRequest request){
-        Customer user = userService.registerUser(registrationRequest);
+        Ecopal user = userService.registerUser(registrationRequest);
         publisher.publishEvent(new RegistrationCompleteEvent(user, applicationUrl(request)));
         return "Success!  Please, check your email for to complete your registration";
     }
@@ -57,13 +63,13 @@ public class CustomerRegistrationController {
     public String resendVerificationToken(@RequestParam("token") String oldToken, HttpServletRequest request)
             throws MessagingException, UnsupportedEncodingException {
         VerificationToken verificationToken =  userService.generateNewVerificationToken(oldToken);
-        Customer theUser = verificationToken.getUser();
+        Ecopal theUser = verificationToken.getUser();
         resendVerificationTokenEmail(theUser, applicationUrl(request), verificationToken);
-        return "A new verification link hs been sent to your email," +
+        return "A new verification link has been sent to your email," +
                 " please, check to complete your registration";
     }
 
-    private void resendVerificationTokenEmail(Customer theUser, String applicationUrl, VerificationToken token)
+    private void resendVerificationTokenEmail(Ecopal theUser, String applicationUrl, VerificationToken token)
             throws MessagingException, UnsupportedEncodingException {
         String url = applicationUrl+"/register/verifyEmail?token="+token.getToken();
         eventListener.sendVerificationEmail(url);
@@ -76,7 +82,7 @@ public class CustomerRegistrationController {
     }
 
     @GetMapping("customers")
-    public ResponseEntity<CustomerResponse> getCustomers(
+    public ResponseEntity<EcopalResponse> getCustomers(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
     ){
@@ -99,5 +105,31 @@ public class CustomerRegistrationController {
     public ResponseEntity<String> deleteCustomer(@PathVariable("id") long customerId) {
         userService.deleteCustomerId(customerId);
         return new ResponseEntity<>("customer delete", HttpStatus.OK);
+    }
+
+    @PostMapping("customer/login")
+    public ResponseEntity<String> loginEngineer(@RequestBody LoginRequest loginRequest) {
+        String loginResponse = userService.loginEngineer(loginRequest.getEmail(), loginRequest.getPassword());
+        return ResponseEntity.ok(loginResponse);
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<EcopalProfileDto> getUserProfile(@PathVariable Long userId) {
+        try {
+            EcopalProfileDto userProfile = userService.getUserProfileDtoById(userId);
+            return ResponseEntity.ok(userProfile);
+        } catch (UserProfileNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/image")
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile image) {
+        try {
+            String imageUrl = cloudinaryService.upload(image);
+            return ResponseEntity.ok(imageUrl);
+        } catch (CustomerNotFoundException Ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
+        }
     }
 }
