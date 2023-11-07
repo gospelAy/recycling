@@ -1,6 +1,6 @@
 package com.example.recyclingplastic.SecurityConfig.security;
 
-import com.example.recyclingplastic.models.Customer;
+import com.example.recyclingplastic.models.Ecopal;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,7 +19,7 @@ public class UserRegistrationDetails implements UserDetails {
     private boolean isEnabled;
     private List<GrantedAuthority> authorities;
 
-    public UserRegistrationDetails(Customer user) {
+    public UserRegistrationDetails(Ecopal user) {
         this.userName = user.getEmail();
         this.password = user.getPassword();
         this.isEnabled = user.isEnabled();
