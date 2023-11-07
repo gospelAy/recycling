@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MapController {
     @GetMapping("/showMap")
     public String index() {
-        return "index";
+        return "C:\\Users\\ADMIN\\Downloads\\recycling-plastic\\src\\main\\resources\\templates\\index.html";
     }
 }

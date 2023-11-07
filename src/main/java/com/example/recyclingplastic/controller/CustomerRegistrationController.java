@@ -39,7 +39,6 @@ public class CustomerRegistrationController {
     private final CloudinaryServiceImpl cloudinaryService;
 
     @PostMapping
-
     public String registerUser(@RequestBody RegistrationRequest registrationRequest, final HttpServletRequest request){
         Ecopal user = userService.registerUser(registrationRequest);
         publisher.publishEvent(new RegistrationCompleteEvent(user, applicationUrl(request)));
