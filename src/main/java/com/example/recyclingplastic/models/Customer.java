@@ -6,7 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
-    @Getter
+
+import java.util.Set;
+
+@Getter
     @Setter
     @Entity
     @NoArgsConstructor
@@ -24,7 +27,8 @@ import org.hibernate.annotations.NaturalId;
         private String phoneNumber;
         @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
         private Address address;
-        private String role;
+        @ElementCollection(fetch = FetchType.EAGER)
+        private Set<Role> roles;
         private boolean isEnabled = false;
     }
 
